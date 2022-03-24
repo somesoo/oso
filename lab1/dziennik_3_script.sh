@@ -8,6 +8,14 @@ grep "login authenticator failed" final.log | awk '$9 ~ /[[0-9]+.[0-9]+.[0-9]+.[
 cat most_freq.txt
 wc -l most_freq.txt
 
+if [[ -e ips.txt ]]
+then
+	rm ips.txt
+fi
+if [[ -e after_iplookup.txt ]]
+then
+	rm after_iplookup.txt
+fi
 grep "login authenticator failed" final.log | awk '$8 ~ /[[0-9]+.[0-9]+.[0-9]+.[0-9]+]:/ { print substr($8, 2, length($8)-3) }' | sort > ips.txt
 grep "login authenticator failed" final.log | awk '$9 ~ /[[0-9]+.[0-9]+.[0-9]+.[0-9]+]:/ { print substr($9, 2, length($9)-3) }' | sort >> ips.txt
 
@@ -24,6 +32,7 @@ grep "localuser" final.log | awk '{ print $5}' | cut -d '@' -f 1 | sort | uniq
 echo " Top 20 hackowanych uzytkowników "
 grep "login authenticator failed" final.log | awk ' $13 ~ /(set_id=)/ { print substr ($13, 9, length($13) ) }' | sort > top20user.txt
 grep "login authenticator failed" final.log | awk ' $14 ~ /(set_id=)/ { print substr ($14, 9, length($14) ) }' | sort >> top20user.txt
-uniq -c top20user.txt | sort -rn | cut -d '@' -f 1 | sed -r 's/[)+]//g' | head -20
+sort top20user.txt | cut -d '@' -f 1 | sed -r 's/[)+]//g' > transformed.txt
+uniq -c transformed.txt | sort -rn | head -20
 
 
